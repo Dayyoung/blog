@@ -1,0 +1,220 @@
+
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
+ 
+   <!-- Link Swiper's CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
+  <link rel='stylesheet' href='https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css'>
+
+
+
+<script src="
+https://cdn.jsdelivr.net/npm/jquery-loadingModal@1.0.2/js/jquery.loadingModal.min.js
+"></script>
+<link href="
+https://cdn.jsdelivr.net/npm/jquery-loadingModal@1.0.2/css/jquery.loadingModal.min.css
+" rel="stylesheet">
+
+<script>
+
+$(function(){
+  loading();
+
+});
+
+  function loading() {
+        $('body').loadingModal({text: '불러오는 중...'});
+    setTimeout(function(){
+      
+    $('body').loadingModal('destroy')
+    },1500)
+
+  }
+</script>
+
+<script src='https://unpkg.com/tesseract.js@4.0.1/dist/tesseract.min.js'></script>
+<script>
+
+
+function progressUpdate(packet){
+	var log = document.getElementById('log');
+
+	if(log.firstChild && log.firstChild.status === packet.status){
+		if('progress' in packet){
+			var progress = log.firstChild.querySelector('progress')
+			progress.value = packet.progress
+		}
+	}else{
+		var line = document.createElement('div');
+		line.status = packet.status;
+		var status = document.createElement('div')
+		status.className = 'status'
+		status.appendChild(document.createTextNode(packet.status))
+		line.appendChild(status)
+
+		if('progress' in packet){
+			var progress = document.createElement('progress')
+			progress.value = packet.progress
+			progress.max = 1
+			line.appendChild(progress)
+		}
+
+		if(packet.status == 'done'){
+			var pre = document.createElement('pre')
+			pre.appendChild(document.createTextNode(packet.data.data.text))
+			line.innerHTML = ''
+			line.appendChild(pre)
+
+		}
+
+		log.insertBefore(line, log.firstChild)
+	}
+}
+
+async function recognizeFile(file) {
+	document.querySelector("#log").innerHTML = ''
+
+  const lang = document.querySelector('#langsel').value
+  const data = await Tesseract.recognize(file, lang, {
+    logger: progressUpdate,
+    workerPath: 'https://unpkg.com/tesseract.js@v4.0.1/dist/worker.min.js',
+    langPath: 'https://tessdata.projectnaptha.com/4.0.0',
+    corePath: 'https://unpkg.com/tesseract.js-core@v4.0.1/tesseract-core.wasm.js',
+  });
+
+  // const data = await Tesseract.recognize(file, lang, {
+  //  logger: progressUpdate,
+  // workerPath: '[https://unpkg.com/tesseract.js@v4.0.1/dist/worker.min.js](https://unpkg.com/tesseract.js@v4.0.1/dist/worker.min.js)',
+  // langPath: '[https://tessdata.projectnaptha.com/4.0.0](https://tessdata.projectnaptha.com/4.0.0)',
+  // corePath: '[https://unpkg.com/tesseract.js-core@v4.0.1/tesseract-core.wasm.js](https://unpkg.com/tesseract.js-core@v4.0.1/tesseract-core.wasm.js)',
+  // })
+
+  progressUpdate({ status: 'done', data });
+}
+</script>
+
+<select id="langsel" onchange="window.lastFile && recognizeFile(window.lastFile)">
+<option value='afr'     > Afrikaans             </option>
+<option value='ara'     > Arabic                </option>
+<option value='aze'     > Azerbaijani           </option>
+<option value='bel'     > Belarusian            </option>
+<option value='ben'     > Bengali               </option>
+<option value='bul'     > Bulgarian             </option>
+<option value='cat'     > Catalan               </option>
+<option value='ces'     > Czech                 </option>
+<option value='chi_sim' > Chinese               </option>
+<option value='chi_tra' > Traditional Chinese   </option>
+<option value='chr'     > Cherokee              </option>
+<option value='dan'     > Danish                </option>
+<option value='deu'     > German                </option>
+<option value='ell'     > Greek                 </option>
+<option value='eng'     > English                </option>
+<option value='enm'     > English (Old)         </option>
+<option value='meme'     > Internet Meme                </option>
+<option value='epo'     > Esperanto             </option>
+<option value='epo_alt' > Esperanto alternative </option>
+<option value='est'     > Estonian              </option>
+<option value='eus'     > Basque                </option>
+<option value='fin'     > Finnish               </option>
+<option value='fra'     > French                </option>
+<option value='frk'     > Frankish              </option>
+<option value='frm'     > French (Old)          </option>
+<option value='glg'     > Galician              </option>
+<option value='grc'     > Ancient Greek         </option>
+<option value='heb'     > Hebrew                </option>
+<option value='hin'     > Hindi                 </option>
+<option value='hrv'     > Croatian              </option>
+<option value='hun'     > Hungarian             </option>
+<option value='ind'     > Indonesian            </option>
+<option value='isl'     > Icelandic             </option>
+<option value='ita'     > Italian               </option>
+<option value='ita_old' > Italian (Old)         </option>
+<option value='jpn'     > Japanese              </option>
+<option value='kan'     > Kannada               </option>
+<option value='kor'     selected> Korean                </option>
+<option value='lav'     > Latvian               </option>
+<option value='lit'     > Lithuanian            </option>
+<option value='mal'     > Malayalam             </option>
+<option value='mkd'     > Macedonian            </option>
+<option value='mlt'     > Maltese               </option>
+<option value='msa'     > Malay                 </option>
+<option value='nld'     > Dutch                 </option>
+<option value='nor'     > Norwegian             </option>
+<option value='pol'     > Polish                </option>
+<option value='por'     > Portuguese            </option>
+<option value='ron'     > Romanian              </option>
+<option value='rus'     > Russian               </option>
+<option value='slk'     > Slovakian             </option>
+<option value='slv'     > Slovenian             </option>
+<option value='spa'     > Spanish               </option>
+<option value='spa_old' > Old Spanish           </option>
+<option value='sqi'     > Albanian              </option>
+<option value='srp'     > Serbian (Latin)       </option>
+<option value='swa'     > Swahili               </option>
+<option value='swe'     > Swedish               </option>
+<option value='tam'     > Tamil                 </option>
+<option value='tel'     > Telugu                </option>
+<option value='tgl'     > Tagalog               </option>
+<option value='tha'     > Thai                  </option>
+<option value='tur'     > Turkish               </option>
+<option value='ukr'     > Ukrainian             </option>
+<option value='vie'     > Vietnamese            </option>
+</select>
+
+<input type="file" onchange="recognizeFile(window.lastFile=this.files[0])">
+
+<div id="log"></div>
+
+ <div class="my_div"> <img src="/spacetime/recipe.jpg">        <p>원본</p>    </div>    
+
+ 	<div>     <img src="/spacetime/recipe.jpg" class="grayscale_img_1">        <p>grayscale(0)</p>    </div>    
+
+ 	<div>     <img src="/spacetime/recipe.jpg" class="grayscale_img_2">        <p>grayscale(50%)</p>    </div>    
+
+ 	<div>     <img src="/spacetime/recipe.jpg" class="grayscale_img_3">        <p>grayscale(100%)</p>    </div>
+
+
+<style>
+
+.grayscale_img_1 {    filter: grayscale(0);} 
+.grayscale_img_2 {    filter: grayscale(50%);} 
+.grayscale_img_3 {    filter: grayscale(100%);} 
+
+div {    width: 300px;    float2: left;    border: 1px solid;}
+
+
+#log > div {
+    color: #313131;
+    border-top: 1px solid #dadada;
+    padding: 9px;
+    display: flex;
+}
+#log > div:first-child {
+    border: 0;
+}
+
+.status {
+	min-width: 250px;
+}
+#log {
+    border: 1px solid #dadada;
+    padding: 10px;
+    margin-top: 20px;
+    min-height: 100px;
+}
+body {
+    font-family: sans-serif;
+    margin: 30px;
+}
+
+progress {
+    display: block;
+    width: 100%;
+    transition: opacity 0.5s linear;
+}
+progress[value="1"] {
+    opacity: 0.5;
+}
+</style>
